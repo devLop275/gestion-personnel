@@ -18,6 +18,8 @@ import ListerAbsence from './pages/ListerAbsence';
 import Login from './auth/login';
 import Register from './auth/register';
 import AuthGuard from './auth/AuthGuard';
+import PrivateRoute from './auth/PrivateRoute';
+import Logout from './auth/logout';
 
 
 function App() {
@@ -28,17 +30,17 @@ function App() {
     <Router>
         <Navbar />
         <Routes>
-          <Route exact path="/addper" element={<AddPer/>} />
-          <Route exact path="/editper/:id" element={<EditPer />} />
-          <Route exact path="/viewper/:id" element={<ProfilPer/>} />
-          <Route exact path="/addconge" element={<AddConge/>} />
-          <Route exact path="/listerConge" element={<ListerConge/>} />
-          <Route exact path="/listerAbsence" element={<ListerAbsence/>} />
+          <Route exact path="/addper" element={<PrivateRoute element={<AddPer />} />} />
+          <Route exact path="/editper/:id" element={<PrivateRoute element={<EditPer />} />} />
+          <Route exact path="/viewper/:id" element={<PrivateRoute element={<ProfilPer />} />} />
+          <Route exact path="/addconge" element={<PrivateRoute element={<AddConge />} />} />
+          <Route exact path="/listerConge" element={<PrivateRoute element={<ListerConge />} />} />
+          <Route exact path="/listerAbsence" element={<PrivateRoute element={<ListerAbsence />} />} />
 
-          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/logout" element={<PrivateRoute element={<Logout />} />} />
           <Route path="/register" element={<Register />} />
-          {/* Protect the /home route with AuthGuard */}
-          <Route path="/home" element={<AuthGuard element={<Home />} />}
+          <Route path="/" element={<PrivateRoute element={<Home />} />}
           />
         </Routes>
       </Router>

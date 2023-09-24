@@ -13,7 +13,7 @@ export default function Home() {
   }, [searchText]); // Recharger la liste lorsque searchText change
 
   const loadPer = async () => {
-    const result = await axios.get("http://localhost:8080/personnel");
+    const result = await axios.get("http://localhost:8092/personnel");
     const filteredUsers = result.data.filter((user) =>
       user.firstName.toLowerCase().includes(searchText.toLowerCase())
     );
@@ -21,7 +21,7 @@ export default function Home() {
   };
 
   const deletePer = async (id) => {
-    await axios.delete(`http://localhost:8080/personnel/per/${id}`);
+    await axios.delete(`http://localhost:8092/personnel/per/${id}`);
     loadPer();
   };
 

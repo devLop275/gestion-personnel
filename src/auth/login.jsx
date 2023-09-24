@@ -1,96 +1,71 @@
-import {  useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-
+import React, { useState } from 'react';
 
 function Login() {
-   
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const navigate = useNavigate();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/auth/signin/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    async function login(event) {
-        event.preventDefault();
-        try {
-          await axios.post("http://localhost:8080/api/v1/login", {
-            email: email,
-            password: password,
-            }).then((res) => 
-            {
-             console.log(res.data);
-             
-             if (res.data.message == "Email not exits") 
-             {
-               alert("Email not exits");
-             } 
-             else if(res.data.message == "Login Success")
-             { 
-                setIsLoggedIn(true);
-                navigate('/home');
-             } 
-              else 
-             { 
-                alert("Incorrect Email and Password not match");
-             }
-          }, fail => {
-           console.error(fail); // Error!
-  });
-        }
+      if (response.status === 200) {
+        // Authentication successful, extract the token from the response
+        const data = await response.json();
+        const token = data.token;
 
- 
-         catch (err) {
-          alert(err);
-        }
-      
+        // Store the token in localStorage or a secure storage mechanism
+        localStorage.setItem('token', token);
+
+        // Redirect to the protected home page or any other route
+        navigate('/');
+      } else {
+        alert('Email or Username Incorrect');
       }
+    } catch (error) {
+      console.error('Login error:', error);
+    }
+  };
 
-    return (
-       <div>
-            <div class="container">
-            <div class="row">
-                <h2>Login</h2>
-             <hr/>
-             </div>
-
-             <div class="row">
-             <div class="col-sm-6">
- 
-            <form>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email"  class="form-control" id="email" placeholder="Enter Name"
-          
-          value={email}
-          onChange={(event) => {
-            setEmail(event.target.value);
-          }}
-          
-          />
-
-        </div>
-
-        <div class="form-group">
-            <label>password</label>
-            <input type="password"  class="form-control" id="password" placeholder="Enter Fee"
-            
-            value={password}
-            onChange={(event) => {
-              setPassword(event.target.value);
-            }}
-            
+  return (
+    <div className='container mt-4'>
+      <div className="card">
+        <h1>User Login</h1>
+        <form>
+          <div className="form-group">
+            <input
+              className="form-control"
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-                  <button type="submit" class="btn btn-primary" onClick={login} >Login</button>
-              </form>
+          <div className="form-group">
+            <input
+              className="form-control"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+            <button type="button" className='btn btn-primary mt-4' onClick={handleLogin}>
+              Login
+            </button>
+        </form>
+      </div>
 
-            </div>
-            </div>
-            </div>
-
-     </div>
-    );
-  }
-  
-  export default Login;
+    </div >
+  );
+}
+export default Login;
